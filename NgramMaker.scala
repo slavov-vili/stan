@@ -1,4 +1,4 @@
-//package ngrammer
+package ngrammer
 
 import java.io.File
 import java.nio.charset.CodingErrorAction
@@ -64,7 +64,7 @@ object NgramMaker {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
-    
+
     // make an iterator over all the words in each line
     val wordIter = Source.fromFile(file)
                          .getLines
@@ -81,14 +81,14 @@ object NgramMaker {
                            .map(_.toLowerCase)
         cleanSent.foreach(x => addToMap(x, unigramCount))
         //println(cleanSent.mkString(" "))
-        
+
         // extract all bigrams from the sentence
         val newBigrams = cleanSent.sliding(2).toList
           .collect{case List(x,y) => (x,y)}
           //newBigrams.foreach(println)
         newBigrams.foreach(addToMap(_, bigramCount))
         //println(newBigrams)
-        
+
         // extract all the trigrams from the sentence
         val newTrigrams = cleanSent.sliding(3).toList
           .collect{case List(x,y,z) => (x,y,z)}

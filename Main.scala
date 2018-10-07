@@ -1,17 +1,18 @@
 //package test
 
-import trie.Trie
-import ngrammer._
+import trie.SearchTrie
+import trie.TrieIO
+import ngrammer.NgramMaker
 import java.io.File
 import scala.io.Source
 
 object Main {
-	
+
   def main(args: Array[String]) {
     val dirName = "wordLemPos"
     println("constructing the trie")
     // the trie of words
-    val trie = Trie.TrieNode()
+    val trie = new SearchTrie
     println("creating n-grams")
 
     // for each file in the directory
@@ -20,7 +21,7 @@ object Main {
     for(filepath <- new File(dirName).listFiles
                                      .filter(_.getName
                                               .endsWith(".txt"))) {
-      trie.readFile(filepath)
+      TrieIO.readFile(trie, filepath)
       NgramMaker.readFile(filepath)
     } //end for
 
@@ -37,7 +38,7 @@ object Main {
 
   // reads from Stdin and responds to querries
   // (corrects misspelled words)
-  def read_std_in(myTrie: trie.Trie.TrieNode, totalWC: Int): Unit = {
+  def read_std_in(myTrie: trie.SearchTrie, totalWC: Int): Unit = {
     // for each line in the input
     for(ln <- Source.stdin.getLines) {
       // split the input into a list of lowercased words
@@ -50,7 +51,7 @@ object Main {
 
 
   // corrects all mistakes in the input sentence and returns the correct one
-  def correct_sentence(sent: Array[String], myTrie: trie.Trie.TrieNode,
+  def correct_sentence(sent: Array[String], myTrie: trie.SearchTrie,
                        totalWC: Int): String = {
     // while there are mistakes in the sentence
     while (sent.exists(x => !myTrie.contains(x))) {
@@ -69,7 +70,7 @@ object Main {
       sent(i) = wordScores.maxBy(_._2)._1
       //wordScores.filter(_ == wordScores.maxBy(_._2)).foreach(println)
     }  //end while
-    
+
     // return the sentence
     sent.mkString(" ")
   } //end def
@@ -77,7 +78,7 @@ object Main {
 
 
   // gets all words within edit distance X of the given word
-  def get_within_x(theTrie: trie.Trie.TrieNode, 
+  def get_within_x(theTrie: trie.SearchTrie,
                     word: String): List[(String, Int)] = {
     // first search for words within edit distance 2
     var n = 2
@@ -94,7 +95,7 @@ object Main {
 
 
   // calculates the score of the word given the context
-  def calc_word_score(sent: Array[String], idx: Int, 
+  def calc_word_score(sent: Array[String], idx: Int,
                       candidate: (String, Int),
                       totalWC: Int): (String, Double) = {
     //println(candidate)
@@ -118,7 +119,7 @@ object Main {
         // take the context
         val context = sent.slice(j, j+i)
         //println(context.mkString(" "))
-        
+
         if (context.length == i) {
           // add the count to the sum
           i match {
