@@ -9,3 +9,9 @@ STAN is an Autocorrect tool written in Scala and is still under development
 * Trie-based spellchecking
 * Trie-based levenstein distance search
 * N-gram-based scoring system to determine the most appropriate candidate for correction
+
+### Compile and run
+```
+#> scalac levtrie/levtrie/{Trie.scala,SearchTrie.scala,TrieIO.scala} *.scala
+#> scala Main
+```
